@@ -1,5 +1,6 @@
 #include <iostream>
 
+// The actual behavior I see is a segfault once p becomes 0x7ffffffff000
 int count_x(char* p, char x) {
     if (p == nullptr) return 0;
     int count = 0;

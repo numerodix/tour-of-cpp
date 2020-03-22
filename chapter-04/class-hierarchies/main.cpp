@@ -47,13 +47,13 @@ class Smiley: public Circle {
   public:
     Smiley(Point p, int r): Circle{p, r}, mouth{nullptr} {}
     ~Smiley() {
-      delete mouth;
-      for (auto p: eyes)
-        delete p;
+      // delete mouth;
+      // for (auto p: eyes)
+      //   delete p;
     }
 
     Point center() const { return Point{}; }
-    void move(Point to) {}
+    void move(Point to) override {}
 
     void draw() const;
     void rotate(int) {};
@@ -82,6 +82,11 @@ void Smiley::draw() const {
 }
 
 
+Smiley& convert(Shape* pshape) {
+  return dynamic_cast<Smiley&>(*pshape);
+}
+
+
 int main() {
   Circle left_eye{Point{}, 2};
   Circle right_eye{Point{}, 2};
@@ -93,4 +98,11 @@ int main() {
   sm.set_mouth(&mouth);
 
   sm.draw();
+
+  if (Smiley* p = dynamic_cast<Smiley*>(&sm)) {
+    std::cout << "sm is a Smiley: " << p << std::endl;
+  }
+
+  convert(&sm);
+  convert(&left_eye);  // std::bad_cast
 }

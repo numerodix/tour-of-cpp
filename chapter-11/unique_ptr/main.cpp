@@ -31,8 +31,15 @@ void display(User* user) {
   std::cerr << "Got a user: " << puser.get()->id << "\n";
 }
 
+void pdisplay(std::unique_ptr<User> puser) {
+  std::cerr << "Got a user: " << puser.get()->id << "\n";
+}
+
 int main() {
   auto puser = create_user(1);
   User *user = puser.release();
   display(user);
+
+  auto puser2 = create_user(2);
+  pdisplay(std::move(puser2));
 }

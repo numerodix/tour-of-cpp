@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 
-#include "member_trivial.h"
+#include "member_alloc.h"
+// #include "member_trivial.h"
 
 class MyVariant {
 public:
@@ -21,7 +22,7 @@ public:
   explicit MyVariant(MyMember& member) : m_type{MyType::Member}, m_member{member} {}
 
   MyVariant(const MyVariant& other) {
-    printf("copy ctor\n");
+    printf("MyVariant copy ctor\n");
     m_type = other.m_type;
 
     switch (m_type) {
@@ -44,7 +45,7 @@ public:
   }
 
   MyVariant& operator=(MyVariant& other) {
-    printf("copy ass\n");
+    printf("MyVariant copy ass\n");
     m_type = other.m_type;
 
     switch (m_type) {
@@ -68,7 +69,19 @@ public:
     return *this;
   }
 
-  ~MyVariant() {}
+  ~MyVariant() {
+    switch (m_type) {
+    case MyType::Initial:
+    case MyType::Rubles:
+    case MyType::Atoms:
+    case MyType::Name:
+      // m_name.~basic_string<char>();
+      break;
+    case MyType::Member:
+      m_member.~MyMember();
+      break;
+    }
+  }
 
   MyType type() const {
     return m_type;
@@ -127,9 +140,9 @@ int main() {
   const MyVariant na{rog};
   std::cout << na.name() << '\n';
 
-  MyMember member{34};
+  MyMember member{"harden"};
   const MyVariant mem{member};
-  std::cout << mem.member().id() << '\n';
+  std::cout << mem.member().lastname() << '\n';
 
   std::cout << sizeof(MyVariant) << '\n';
   std::cout << sizeof init << '\n';
@@ -137,21 +150,21 @@ int main() {
   std::cout << sizeof ato << '\n';
   std::cout << sizeof na << '\n';
 
-  // copy ctor
-  const MyVariant init2{init};
-  std::cout << init2.initial() << '\n';
+  // // copy ctor
+  // const MyVariant init2{init};
+  // std::cout << init2.initial() << '\n';
 
-  // copy ass
-  const MyVariant init3 = init;
-  std::cout << init3.initial() << '\n';
+  // // copy ass
+  // const MyVariant init3 = init;
+  // std::cout << init3.initial() << '\n';
 
-  // move ctor
-  const MyVariant init4{std::move(init)};
-  std::cout << init4.initial() << '\n';
+  // // move ctor
+  // const MyVariant init4{std::move(init)};
+  // std::cout << init4.initial() << '\n';
 
-  // move ass
-  const MyVariant init5 = std::move(init);
-  std::cout << init5.initial() << '\n';
+  // // move ass
+  // const MyVariant init5 = std::move(init);
+  // std::cout << init5.initial() << '\n';
 
   return 0;
 }
